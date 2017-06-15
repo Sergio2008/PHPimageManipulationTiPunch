@@ -2,7 +2,7 @@
 	
 	/* ------- reglages des parametre ------ */
 
-	$transparency = 60;
+	$transparency = 100;
 	// header ("Content-type: image/jpeg"); // L'image que l'on va créer est un jpeg
 
 
@@ -10,7 +10,7 @@
 	
 
 	$uploadScFile = "images/motif/";
-	$sourceName ="ecusson.png"; 
+	$sourceName ="ecusson2.png"; 
 	$pictureSourceUrl = $uploadScFile  . $sourceName;
 	// echo $pictureSourceUrl;
 
@@ -18,6 +18,21 @@
 	$destinationName ="hommeTshirt.png"; 
 	$pictureDestinationUrl = $uploadDsFile  . $destinationName;
 	// echo $pictureDestinationUrl;
+
+
+	 function imagecopymerge_alpha($dst_im, $src_im, $dst_x, $dst_y, $src_x, $src_y, $src_w, $src_h, $pct){
+        // creating a cut resource
+        $cut = imagecreatetruecolor($src_w, $src_h);
+
+        // copying relevant section from background to the cut resource
+        imagecopy($cut, $dst_im, 0, 0, $dst_x, $dst_y, $src_w, $src_h);
+       
+        // copying relevant section from watermark to the cut resource
+        imagecopy($cut, $src_im, 0, 0, $src_x, $src_y, $src_w, $src_h);
+       
+        // insert cut resource to destination image
+        imagecopymerge($dst_im, $cut, $dst_x, $dst_y, 0, 0, $src_w, $src_h, $pct);
+    } 
 
 	$source = imagecreatefrompng($pictureSourceUrl); // Le logo est la source
 
@@ -48,7 +63,9 @@
 
 	// On met le logo (source) dans l'image de destination (la photo)
 
-	imagecopymerge($destination, $source, $destination_x, $destination_y, 0, 0, 	$largeur_source, $hauteur_source, $transparency);
+	imagesavealpha($source, true);
+	imagesavealpha($destination, true);
+	imagecopymerge_alpha($destination, $source, $destination_x, $destination_y, 0, 0, 	$largeur_source, $hauteur_source, $transparency);
 
 
 	// On affiche l'image de destination qui a été fusionnée avec le logo
@@ -68,6 +85,8 @@
 	
 	/* ---- save the new file ----- */
 
+	imagesavealpha($destination, true);
+	imagesavealpha($source, true);
     imagepng($destination, $newFile);
 
     // echo $newFile;
