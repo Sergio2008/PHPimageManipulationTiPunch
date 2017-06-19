@@ -56,7 +56,7 @@
 	$sourceScaled = imagescale( $source, $NouvelleLargeur, $NouvelleHauteur );
 	imagepng($sourceScaled, $pictureSourceUrl);
 
-	echo ($Reduction . "La nouvelle largeur du motif est de " . $NouvelleLargeur . " px. ");
+	echo ("L'image est agrandie de " . $Reduction . "%. <br/>La nouvelle largeur du motif est de " . $NouvelleLargeur . " px. ");
 	//
 	$destination = imagecreatefrompng($pictureDestinationUrl); // La photo est la destination
 	echo (getimagesize($source));
