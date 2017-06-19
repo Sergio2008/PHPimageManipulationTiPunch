@@ -40,23 +40,23 @@
 
 	$hauteur_source = imagesy($source);
 	// MISE A 100% DE LARGEUR OU HAUTEUR (SELON LE MOTIF) DE LA ZONE UTILE
-	
 	$largeur_max = 1181;
-	$hauteur_max = 2362;	
-	
+	$hauteur_max = 2362;
+  // $scale = $_POST['percent'];
+
 	// Étape 1 :
-	$NouvelleLargeur = 350;
-	
+	$NouvelleLargeur = 1181;
+
 	// Étape 2 :
 	$Reduction = ( ($NouvelleLargeur * 100)/$largeur_source );
-	
+
 	// Étape 3 :
 	$NouvelleHauteur = ( ($hauteur_source * $Reduction)/100 );
 
 	$sourceScaled = imagescale( $source, $NouvelleLargeur, $NouvelleHauteur );
-	//imagepng($source, $pictureSourceUrl);
+	imagepng($sourceScaled, $pictureSourceUrl);
 
-	echo ("La nouvelle largeur du motif est de " . $NouvelleLargeur . " px. ");
+	echo ($Reduction . "La nouvelle largeur du motif est de " . $NouvelleLargeur . " px. ");
 	//
 	$destination = imagecreatefrompng($pictureDestinationUrl); // La photo est la destination
 	echo (getimagesize($source));
@@ -78,7 +78,6 @@
 	$destination_x = $_POST['x']+673; // COIN HAUT GAUCHE DE LA ZONE UTILE EN X
 
 	$destination_y =  $_POST['y']+613; // COIN HAUT GAUCHE DE LA ZONE UTILE EN Y
-	
 // $destination_x = 0;
 // $destination_y = 0;
 	// On met le logo (source) dans l'image de destination (la photo)
@@ -87,7 +86,7 @@
 	imagesavealpha($source, true);
 	imagesavealpha($destination, true);
 
-	imagecopymerge_alpha($destination, $sourceScaled, $destination_x, $destination_y, 0, 0, 	$NouvelleLargeur, $NouvelleHauteur, $transparency);
+	imagecopymerge_alpha($destination, $sourceScaled, $destination_x, $destination_y, 0, 0, $NouvelleLargeur, $NouvelleHauteur, $transparency);
 
 
 	// On affiche l'image de destination qui a été fusionnée avec le logo
@@ -109,10 +108,10 @@
 
 	imagesavealpha($destination, true);
 	imagesavealpha($source, true);
-  	imagepng($destination, $newFile);
+	imagepng($destination, $newFile);
 
-    // echo $newFile;
-echo "<br/><img src='$newFile' width='50%' height='auto'><br/>";
+  // echo $newFile;
+  echo "<br/><img src='$newFile' width='50%' height='auto'><br/>";
 
 	$arr = array('source' => $newFile, 'loading' => 'finished');
 	$arr2 = json_encode($arr);
