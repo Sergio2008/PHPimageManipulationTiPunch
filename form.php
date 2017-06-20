@@ -11,6 +11,11 @@
 	<body>
 
 	<!-- Menu de gauche avec avatar -->
+		<form action="upload.php" method="post" enctype="multipart/form-data"> ...
+			<input type="file" name="fileToUpload" id="fileToUpload">
+			<input type="submit" value="Upload Image" name="submit">
+		</form>
+
 		<form action="./php.php" method="post">
 
 			<p>
@@ -19,8 +24,8 @@
     		<label >Absysse</label>
     		<input type="text" name="y" /><br/><br/>
     		<label >Modèle</label>
-        <INPUT type= "radio" name="genre" value="homme"> homme
-        <INPUT type= "radio" name="genre" value="femme"> femme<br/><br/>
+        <INPUT type= "radio" name="genre" value="homme">homme
+        <INPUT type= "radio" name="genre" value="femme">femme<br/><br/>
         <label >Transparence</label>
         <br/><br/>5 <input type="range" name="transparency" min="5" max="100" step="0.01" value="100"> 100%<br/><br/>
 

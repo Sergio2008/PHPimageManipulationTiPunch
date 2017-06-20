@@ -3,46 +3,75 @@
 	/* ------- reglages des parametre ------ */
 
 	$transparency = $_POST['transparency'];
-	// header ("Content-type: image/jpeg"); // L'image que l'on va créer est un jpeg
 
 
 	// On charge d'abord les images
 
 
 	$uploadScFile = "images/motif/";
-	$sourceName ="ecusson.png";
+
+  $copySourceUrl = "images/motif/copy/"; //pour garder la source identique on copie l'image
+
+
+  $sourceName ="10549967_10203472618489400_6180382018808615041_o.jpg";
+
+
   $pictureSourceUrl = $uploadScFile . $sourceName;
-  // echo $pictureSourceUrl;
+
+  $fileType = strtolower(substr($pictureSourceUrl, strlen($pictureSourceUrl)-3));
+
+  switch($fileType) {
+      case('gif'):
+          $source = imagecreatefromgif($pictureSourceUrl);
+          echo "<br/><br/>$source ".$fileType."<br/>";
+
+
+          break;
+
+      case('png'):
+          $source = imagecreatefrompng($pictureSourceUrl); // Le logo est la source
+          echo "<br/><br/>$source ".$fileType."<br/>";
+
+          break;
+
+      default:
+          $source = imagecreatefromjpeg($pictureSourceUrl);
+          echo "<br/><br/>$source ".$fileType."<br/>";
+
+  }
 
   $uploadDsFile = "images/support/";
   $destination_y =  $_POST['y']+1000; // COIN HAUT GAUCHE DE LA ZONE UTILE EN Y;
   $destination_x = $_POST['x']+673; // COIN HAUT GAUCHE DE LA ZONE UTILE EN X
   if ($_POST['genre']=='homme') {
 
-      $destination_y =  $_POST['y']+613; // COIN HAUT GAUCHE DE LA ZONE UTILE EN Y
+      $destination_y = $_POST['y']+613; // COIN HAUT GAUCHE DE LA ZONE UTILE EN Y
       $destinationName ="hommeTshirt.png";
   }
   else $destinationName = "femmeTshirt.png";
   $pictureDestinationUrl = $uploadDsFile . $destinationName;
-  // echo $pictureDestinationUrl;
-  var_dump($_POST);
+
+  echo $pictureDestinationUrl." <br/>";
+  // var_dump($_POST);
 
 
-   function imagecopymerge_alpha($dst_im, $src_im, $dst_x, $dst_y, $src_x, $src_y, $src_w, $src_h, $pct){
-        // creating a cut resource
-        $cut = imagecreatetruecolor($src_w, $src_h);
 
-        // copying relevant section from background to the cut resource
-        imagecopy($cut, $dst_im, 0, 0, $dst_x, $dst_y, $src_w, $src_h);
+  function imagecopymerge_alpha($dst_im, $src_im, $dst_x, $dst_y, $src_x, $src_y, $src_w, $src_h, $pct){
+      // creating a cut resource
+    $cut = imagecreatetruecolor($src_w, $src_h);
 
-        // copying relevant section from watermark to the cut resource
-        imagecopy($cut, $src_im, 0, 0, $src_x, $src_y, $src_w, $src_h);
+    // copying relevant section from background to the cut resource
+    imagecopy($cut, $dst_im, 0, 0, $dst_x, $dst_y, $src_w, $src_h);
 
-        // insert cut resource to destination image
-        imagecopymerge($dst_im, $cut, $dst_x, $dst_y, 0, 0, $src_w, $src_h, $pct);
-    }
+    // copying relevant section from watermark to the cut resource
+    imagecopy($cut, $src_im, 0, 0, $src_x, $src_y, $src_w, $src_h);
 
-  $source = imagecreatefrompng($pictureSourceUrl); // Le logo est la source
+    // insert cut resource to destination image
+    imagecopymerge($dst_im, $cut, $dst_x, $dst_y, 0, 0, $src_w, $src_h, $pct);
+  }
+
+
+
 
   $largeur_source = imagesx($source);
 
@@ -62,12 +91,15 @@
   $NouvelleHauteur = ( ($hauteur_source * $Reduction)/100 );
 
   $sourceScaled = imagescale( $source, $NouvelleLargeur, $NouvelleHauteur );
-  // $affine = [];
-  // $clip = [ 0, 0, $largeur_max, $hauteur_max ];
-  // imageaffine($sourceScaled,$affine,$clip);
-  imagepng($sourceScaled, $pictureSourceUrl);
 
-  echo ("<br/><br/>L'image est agrandie de " . $Reduction . "%. <br/>La nouvelle largeur du motif est de " . $NouvelleLargeur . " px. ");
+  imagepng($sourceScaled, $copySourceUrl);
+
+  $fichierCopy = $copySourceUrl.$sourceName;
+  echo $fichierCopy;
+
+
+
+  echo ("<br/><br/>L'image est affichée a " . $Reduction . "%. <br/>La nouvelle largeur du motif est de " . $NouvelleLargeur . " px. ");
   //
   $destination = imagecreatefrompng($pictureDestinationUrl); // La photo est la destination
   echo (getimagesize($source));
@@ -119,13 +151,20 @@
 	imagepng($destination, $newFile);
 
   // echo $newFile;
-  echo "<br/><img src='$newFile' width='50%' height='auto'><br/>";
+  echo "<br/><img src='$newFile' width='30%' height='auto'/><br/>";
 
 	$arr = array('source' => $newFile, 'loading' => 'finished');
 	$arr2 = json_encode($arr);
 	echo $arr2 . "<br/><br/><form action='./form.php'>
     <input type='submit' value='Back' />
 </form>";
+
+  $imglist = glob('./images/motif/*.{jpg,jpeg,gif,png}', GLOB_BRACE);
+  var_dump($imglist);
+  foreach ($imglist as $key => $value) {
+    // var_dump($key => $value);
+    echo("<br/><br/><ul><li style='display:inline;'><img src='$value' width='100px' height='auto'/></li></u>");
+  }
 	// echo json_decode($arr2);
 
 
