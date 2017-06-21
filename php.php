@@ -13,7 +13,7 @@
   $copySourceUrl = "images/motif/copy/"; //pour garder la source identique on copie l'image
 
 
-  $sourceName ="10549967_10203472618489400_6180382018808615041_o.jpg";
+  $sourceName ="21avril2017.png";
 
 
   $pictureSourceUrl = $uploadScFile . $sourceName;
@@ -23,25 +23,22 @@
   switch($fileType) {
       case('gif'):
           $source = imagecreatefromgif($pictureSourceUrl);
-          echo "<br/><br/>$source ".$fileType."<br/>";
-
-
+          echo "$pictureSourceUrl<br/><br/>";
           break;
 
       case('png'):
           $source = imagecreatefrompng($pictureSourceUrl); // Le logo est la source
-          echo "<br/><br/>$source ".$fileType."<br/>";
-
+          echo "$pictureSourceUrl<br/><br/>";
           break;
 
       default:
           $source = imagecreatefromjpeg($pictureSourceUrl);
-          echo "<br/><br/>$source ".$fileType."<br/>";
+          echo "$pictureSourceUrl<br/><br/>";
 
   }
 
   $uploadDsFile = "images/support/";
-  $destination_y =  $_POST['y']+1000; // COIN HAUT GAUCHE DE LA ZONE UTILE EN Y;
+  $destination_y = $_POST['y']+1000; // COIN HAUT GAUCHE DE LA ZONE UTILE EN Y;
   $destination_x = $_POST['x']+673; // COIN HAUT GAUCHE DE LA ZONE UTILE EN X
   if ($_POST['genre']=='homme') {
 
@@ -53,7 +50,6 @@
 
   echo $pictureDestinationUrl." <br/>";
   // var_dump($_POST);
-
 
 
   function imagecopymerge_alpha($dst_im, $src_im, $dst_x, $dst_y, $src_x, $src_y, $src_w, $src_h, $pct){
@@ -80,20 +76,27 @@
   $largeur_max = 1181;
   $hauteur_max = 2362;
   // $scale = $_POST['percent'];
+  var_dump($_POST['reduction'] != '');
 
-  // Étape 1 :
-  $NouvelleLargeur = 1181;
+  if ($_POST['reduction'] != '') {
+    $Reduction = $_POST['reduction'];
+    $NouvelleLargeur = ($largeur_source/100) * $Reduction;
+    $NouvelleHauteur = ($hauteur_source/100) * $Reduction;
+  }
 
-  // Étape 2 :
-  $Reduction = ( ($NouvelleLargeur * 100)/$largeur_source );
+  else {
+    // Étape 1 :
+    $NouvelleLargeur = 1181;
 
-  // Étape 3 :
-  $NouvelleHauteur = ( ($hauteur_source * $Reduction)/100 );
+    // Étape 2 :
+    $Reduction = ( ($NouvelleLargeur * 100)/$largeur_source );
+
+    // Étape 3 :
+    $NouvelleHauteur = ( ($hauteur_source * $Reduction)/100 );
+  };
 
   $sourceScaled = imagescale( $source, $NouvelleLargeur, $NouvelleHauteur );
-
   imagepng($sourceScaled, $copySourceUrl);
-
   $fichierCopy = $copySourceUrl.$sourceName;
   echo $fichierCopy;
 
@@ -148,13 +151,15 @@
 
 	imagesavealpha($destination, true);
 	imagesavealpha($source, true);
-	imagepng($destination, $newFile);
+  imagepng($destination, $newFile);
 
   // echo $newFile;
-  echo "<br/><img src='$newFile' width='30%' height='auto'/><br/>";
+  echo "<br/><img src='$newFile' width='40%' height='auto'/><br/>";
 
 	$arr = array('source' => $newFile, 'loading' => 'finished');
 	$arr2 = json_encode($arr);
+
+  //bouton Back
 	echo $arr2 . "<br/><br/><form action='./form.php'>
     <input type='submit' value='Back' />
 </form>";

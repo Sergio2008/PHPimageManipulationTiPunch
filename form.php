@@ -19,7 +19,9 @@
 		<form action="./php.php" method="post">
 
 			<p>
-			<label >Ordonée</label>
+				<label>Réduction</label>
+			  <input type="text" name="reduction" /><br/><br/>
+				<label >Ordonée</label>
     		<input type="text" name="x" />
     		<label >Absysse</label>
     		<input type="text" name="y" /><br/><br/>
