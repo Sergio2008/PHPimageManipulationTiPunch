@@ -13,7 +13,7 @@
   $copySourceUrl = "images/motif/copy/"; //pour garder la source identique on copie l'image
 
 
-  $sourceName ="21avril2017.png";
+  $sourceName ="tumblr_onduxhdXjd1s9jja0o1_540.jpg";
 
 
   $pictureSourceUrl = $uploadScFile . $sourceName;
@@ -42,15 +42,23 @@
   $destination_x = $_POST['x']+673; // COIN HAUT GAUCHE DE LA ZONE UTILE EN X
   if ($_POST['genre']=='homme') {
 
-      $destination_y = $_POST['y']+613; // COIN HAUT GAUCHE DE LA ZONE UTILE EN Y
-      $destinationName ="hommeTshirt.png";
+    $largeur_max = 1181;
+    $hauteur_max = 2362;
+    $destination_y = $_POST['y']+613; // COIN HAUT GAUCHE DE LA ZONE UTILE EN Y
+    $destinationName ="hommeTshirt.png";
   }
-  else $destinationName = "femmeTshirt.png";
+  else {
+    $largeur_max = 1160;
+    $hauteur_max = 1700;
+    $destinationName = "femmeTshirt.png";
+  }
   $pictureDestinationUrl = $uploadDsFile . $destinationName;
 
   echo $pictureDestinationUrl." <br/>";
   // var_dump($_POST);
 
+  $widthZone = $largeur_max;
+  $heightZone = $hauteur_max;
 
   function imagecopymerge_alpha($dst_im, $src_im, $dst_x, $dst_y, $src_x, $src_y, $src_w, $src_h, $pct){
       // creating a cut resource
@@ -73,8 +81,6 @@
 
   $hauteur_source = imagesy($source);
   // MISE A 100% DE LARGEUR OU HAUTEUR (SELON LE MOTIF) DE LA ZONE UTILE
-  $largeur_max = 1181;
-  $hauteur_max = 2362;
   // $scale = $_POST['percent'];
   var_dump($_POST['reduction'] != '');
 
@@ -85,8 +91,9 @@
   }
 
   else {
+
     // Étape 1 :
-    $NouvelleLargeur = 1181;
+    $NouvelleLargeur = $largeur_max;
 
     // Étape 2 :
     $Reduction = ( ($NouvelleLargeur * 100)/$largeur_source );
@@ -96,10 +103,17 @@
   };
 
   $sourceScaled = imagescale( $source, $NouvelleLargeur, $NouvelleHauteur );
+
   imagepng($sourceScaled, $copySourceUrl);
   $fichierCopy = $copySourceUrl.$sourceName;
   echo $fichierCopy;
 
+// centre de l'image :
+
+$centerXimg = $NouvelleLargeur / 2;
+$centerYimg = $NouvelleHauteur / 2;
+
+//
 
 
   echo ("<br/><br/>L'image est affichée a " . $Reduction . "%. <br/>La nouvelle largeur du motif est de " . $NouvelleLargeur . " px. ");
@@ -107,39 +121,17 @@
   $destination = imagecreatefrompng($pictureDestinationUrl); // La photo est la destination
   echo (getimagesize($source));
 
+  if ($NouvelleHauteur < $hauteur_max) {
+    $hauteur_max = $NouvelleHauteur;
+  };
+  if ($NouvelleLargeur < $largeur_max) {
+    $largeur_max = $NouvelleLargeur;
+  };
 
-  // Les fonctions imagesx et imagesy renvoient la largeur et la hauteur d'une image
-
-  $largeur_destination = imagesx($destination);
-
-  $hauteur_destination = imagesy($destination);
-
-
-  // On veut placer le logo en haut à droite, on calcule les coordonnées où on  doit placer le logo sur la photo
-
-  //$destination_x = $largeur_destination - $NouvelleLargeur;
-
-  //$destination_y =  $hauteur_destination - $NouvelleHauteur;
-
-// $destination_x = 0;
-// $destination_y = 0;
-	// On met le logo (source) dans l'image de destination (la photo)
+  imagecopymerge_alpha($destination, $sourceScaled, $destination_x, $destination_y, (($NouvelleLargeur - $largeur_max) / 2), (($NouvelleHauteur - $hauteur_max) / 2), $largeur_max-$_POST['x'], $hauteur_max-$_POST['y'], $transparency);
 
 
-	imagesavealpha($source, true);
-	imagesavealpha($destination, true);
 
-	imagecopymerge_alpha($destination, $sourceScaled, $destination_x, $destination_y, 0, 0, $NouvelleLargeur, $NouvelleHauteur, $transparency);
-
-
-	// On affiche l'image de destination qui a été fusionnée avec le logo
-
-	// imagejpeg($destination);
-	/* ---- generate the new shuffle file name ----- */
-
-	// $chaine='abcdefghijklmnopqrstuvwxyz0123456789';
-	// $melange=str_shuffle($chaine);
-	// $resultName = substr($melange, 0, 8);
 
 	/* ---- generate the new file name  ----- */
 	$storageFile = "images_generer/";
