@@ -3,41 +3,42 @@
 	/* ------- reglages des parametre ------ */
 
 	$transparency = $_POST['transparency'];
-
+  $imgTitle = $_POST['imageTitre'];
+  $imgType = 1;
 
 	// On charge d'abord les images
 
 
-	$uploadScFile = "images/motif/";
+  $uploadDsFile = "images/support/"; // Le dossier des T-shirt
+  $uploadScFile = "images/motif/"; //Le dossier de l'upload
+  $copySourceUrl = "images/motif/copy/"; // Pour garder la source identique on copie l'image traité dans un dossier
 
-  $copySourceUrl = "images/motif/copy/"; //pour garder la source identique on copie l'image
+  $sourceName ="yonger-femmes-pu-bondage-non-toxique-harnais-masqu.jpg";
+
+  $pictureSourceUrl = $uploadScFile . $sourceName; // composition de l'url du fichier upload
 
 
-  $sourceName ="tumblr_onduxhdXjd1s9jja0o1_540.jpg";
+  //recupère l'image grâce a son Url pour le traitement en utilisant la bonne fonction selon son mime
+  function imageExtentiondetect($imgUrl){
+      $fileMime = mime_content_type($imgUrl);
 
+      switch($fileMime) {
+          case('image/gif'):
+              $imgMotif = imagecreatefromgif($imgUrl);
+              break;
 
-  $pictureSourceUrl = $uploadScFile . $sourceName;
+          case('image/png'):
+              $imgMotif = imagecreatefrompng($imgUrl);
+              break;
 
-  $fileType = strtolower(substr($pictureSourceUrl, strlen($pictureSourceUrl)-3));
-
-  switch($fileType) {
-      case('gif'):
-          $source = imagecreatefromgif($pictureSourceUrl);
-          echo "$pictureSourceUrl<br/><br/>";
-          break;
-
-      case('png'):
-          $source = imagecreatefrompng($pictureSourceUrl); // Le logo est la source
-          echo "$pictureSourceUrl<br/><br/>";
-          break;
-
-      default:
-          $source = imagecreatefromjpeg($pictureSourceUrl);
-          echo "$pictureSourceUrl<br/><br/>";
-
+          default:
+              $imgMotif = imagecreatefromjpeg($imgUrl);
+      }
+      return $imgMotif;
   }
 
-  $uploadDsFile = "images/support/";
+  $source = imageExtentiondetect($pictureSourceUrl);
+
   $destination_y = $_POST['y']+1000; // COIN HAUT GAUCHE DE LA ZONE UTILE EN Y;
   $destination_x = $_POST['x']+673; // COIN HAUT GAUCHE DE LA ZONE UTILE EN X
   if ($_POST['genre']=='homme') {
@@ -54,7 +55,7 @@
   }
   $pictureDestinationUrl = $uploadDsFile . $destinationName;
 
-  echo $pictureDestinationUrl." <br/>";
+  echo $pictureDestinationUrl."<br/><br/>";
   // var_dump($_POST);
 
   $widthZone = $largeur_max;
@@ -152,15 +153,36 @@ $centerYimg = $NouvelleHauteur / 2;
 	$arr2 = json_encode($arr);
 
   //bouton Back
-	echo $arr2 . "<br/><br/><form action='./form.php'>
-    <input type='submit' value='Back' />
-</form>";
+	echo $arr2 . "<br/><br/><form action='./form.php'><input type='submit' value='Back' /></form>";
+
+
+  try
+  {
+    $bdd = new PDO('mysql:host=localhost;dbname=microcms;charset=utf8', 'root', 'eCEDi3101');
+  }
+  catch(Exception $e)
+  {
+          die('Erreur : '.$e->getMessage());
+  }
+
+  $req = $bdd->prepare('INSERT INTO t_picture(picture_title, picture_type, picture_url) VALUES(:Titre_image, :Type_image, :Url_image)');
+  $req->execute(array(
+    'Titre_image' => $imgTitle,
+    'Type_image' => $imgType,
+    'Url_image' => $newFile
+    ));
+
+  echo '<br/>L\'image a bien été ajouté !<br/><br/>';
+
+
+
+
 
   $imglist = glob('./images/motif/*.{jpg,jpeg,gif,png}', GLOB_BRACE);
   var_dump($imglist);
   foreach ($imglist as $key => $value) {
     // var_dump($key => $value);
-    echo("<br/><br/><ul><li style='display:inline;'><img src='$value' width='100px' height='auto'/></li></u>");
+    echo("<br/><br/><div style='float:right;margin-left:2px;'><img src='$value' width='100px' height='auto'/></div>");
   }
 	// echo json_decode($arr2);
 
