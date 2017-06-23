@@ -13,7 +13,7 @@
   $uploadScFile = "images/motif/"; //Le dossier de l'upload
   $copySourceUrl = "images/motif/copy/"; // Pour garder la source identique on copie l'image traité dans un dossier
 
-  $sourceName ="yonger-femmes-pu-bondage-non-toxique-harnais-masqu.jpg";
+  $sourceName ="logo.jpg";
 
   $pictureSourceUrl = $uploadScFile . $sourceName; // composition de l'url du fichier upload
 
@@ -76,8 +76,6 @@
   }
 
 
-
-
   $largeur_source = imagesx($source);
 
   $hauteur_source = imagesy($source);
@@ -133,10 +131,11 @@ $centerYimg = $NouvelleHauteur / 2;
 
 
 
-
 	/* ---- generate the new file name  ----- */
 	$storageFile = "images_generer/";
-	$resultName = "mon_image";
+  $chaine='abcdefghijklmnopqrstuvwxyz0123456789';
+  $melange=str_shuffle($chaine);
+  $resultName = substr($melange, 0, 8);
 	$newExtentionName = ".png";
 	$newFile = $storageFile.$resultName.$newExtentionName;
 
