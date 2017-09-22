@@ -29,7 +29,7 @@
     		<input type="text" name="y" /><br/><br/>
     		<img src='http://localhost/PHPimageManipulationTiPunch/images_generer/mon_image.png' width='40%' height='auto'/><br/><br/>
     		<label >Modèle</label>
-			<INPUT type= "radio" name="genre" value="homme">homme
+		<INPUT type= "radio" name="genre" value="homme">homme
         	<INPUT type= "radio" name="genre" value="femme">femme<br/><br/>
         	<label >Transparence</label>
         	<br/><br/>5 <input type="range" name="transparency" min="5" max="100" step="0.01" value="100"> 100%<br/><br/>
